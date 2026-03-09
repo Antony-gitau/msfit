@@ -46,22 +46,21 @@ Requirements:
 
 This command writes into a fresh run folder under `code_reproduction/` and refuses to overwrite an existing folder:
 
-```bash
-bash msfit/reproduce_best_submission.sh \
-  --data-root /path/to/wbc-bench-2026-data \
-  --python /path/to/python \
-  --run-name repro_$(date +%Y%m%d_%H%M%S)
+```
+ RUN_NAME="repro_det_$(date +%Y%m%d_%H%M%S)"
+  nohup bash msfit/reproduce_best_submission.sh \
+    --data-root /mnt/c/Users/amg/Downloads/wbcc-2026-main/wbc-bench-2026-data \
+    --python ./venv/bin/python \
+    --run-name "$RUN_NAME" \
+    > "code_reproduction/${RUN_NAME}.nohup.log" 2>&1 &
+  echo "$RUN_NAME"
+```
+and you can monitor the run by running this command:
+
+```
+tail -f "code_reproduction/${RUN_NAME}.nohup.log"
 ```
 
-Recommended stricter verification command:
-
-```bash
-bash msfit/reproduce_best_submission.sh \
-  --data-root /path/to/wbc-bench-2026-data \
-  --python /path/to/python \
-  --run-name repro_$(date +%Y%m%d_%H%M%S) \
-  --strict-flips 1
-```
 
 Outputs:
 
@@ -71,18 +70,35 @@ Outputs:
 - `OUT_ROOT/RUN_NAME/*/best.pth`
 - `OUT_ROOT/RUN_NAME/preds_*_test/`
 
-## Seed Policy
 
-The winning recipe uses a fixed integer seed, `42`. We keep that as the default because it matches the submitted training recipe.
-
-We do not silently force deterministic CUDA behavior by default, because that would change the original training setup and can reduce throughput. If you want a slower, more repeatable rerun, pass `--deterministic 1` to the reproduction script.
 
 ## Notes
 
 - `train.py` still supports more than the winning recipe, but the README only documents the published path.
 - `inference.py` supports eval/test inference, TTA, logit export, and threshold/bias utilities.
 - `ensemble_smart.py` is retained as a research utility, not as the primary reproduction path.
+- If you want a slower, more repeatable rerun, pass `--deterministic 1` to the reproduction script.
+
+Like this:
+
+```
+  RUN_NAME="repro_baseline_det_v1"
+  nohup bash msfit/reproduce_best_submission.sh \
+    --data-root /mnt/c/Users/amg/Downloads/wbcc-2026-main/wbc-bench-2026-data \
+    --python ./venv/bin/python \
+    --run-name "$RUN_NAME" \
+    --deterministic 1 \
+    > "code_reproduction/${RUN_NAME}.nohup.log" 2>&1 &
+```
 
 ## Citation
 
-If you use this code, cite the ISBI 2026 challenge paper once the camera-ready citation is available.
+```
+@inproceedings{Gitau2026ISBI,
+  author    = {Antony Gitau and Martin Paulson and Bjørn-Jostein Singstad and Karl Thomas Hjelmervik and Ola Marius Lysaker and Veralia Gabriela Sanchez},
+  title     = {Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification},
+  booktitle = {2026 IEEE 23rd International Symposium on Biomedical Imaging (ISBI)},
+  year      = {2026},
+  organization = {IEEE}
+}
+```
