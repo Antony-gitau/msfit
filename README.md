@@ -1,9 +1,7 @@
-# msfit
+# MSFiT (Multi-Stage Fine-Tuning)
 
-`msfit` is the publication-ready code bundle for our ISBI 2026 WBCBench submission:
 Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification.
 
-There is one supported shell entrypoint and everything else is Python code used by that script.
 
 ## Method Overview
 
