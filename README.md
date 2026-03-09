@@ -55,6 +55,8 @@ In plain terms:
 
 Reference submission CSVs for these rows are included in `msfit/submissions/`.
 
+And model checkpoints of the Anchor can be found on Hugging Face - https://huggingface.co/AntonyG/msfit-dinobloom-v4-mlp-s3
+
 ## Head Specialization
 
 Examples from eval showing why head diversity was useful. For `MLP`, `linear`, and `cosine`, the table shows the best score within that head family on eval with TTA. `dec_c1` is shown separately because it is a frozen-backbone decoupled classifier rather than part of the main head-family sweep.
@@ -115,6 +117,7 @@ Monitor the run with:
 ```bash
 tail -f "code_reproduction/${RUN_NAME}.nohup.log"
 ```
+
 ## Method Summary
 
 1. **Backbone in the best setup:** `dinobloom_base`
