@@ -118,6 +118,21 @@ Monitor the run with:
 tail -f "code_reproduction/${RUN_NAME}.nohup.log"
 ```
 
+## Single-Model Commands
+
+If you want one-command training for the main published branches without running the full hybrid reproduction, use the scripts in [`experiments/`](./experiments):
+
+```bash
+bash msfit/experiments/train_mlp.sh --data-root /path/to/wbcbench-2026-data
+bash msfit/experiments/train_linear.sh --data-root /path/to/wbcbench-2026-data
+bash msfit/experiments/train_cosine.sh --data-root /path/to/wbcbench-2026-data
+bash msfit/experiments/train_decoupled_c1.sh \
+  --data-root /path/to/wbcbench-2026-data \
+  --checkpoint /path/to/dinobloom_v4_mlp_s3/best.pth
+```
+
+These wrappers create fresh run directories under `code_reproduction/` and keep the published stage schedules for each branch.
+
 ## Method Summary
 
 1. **Backbone in the best setup:** `dinobloom_base`
