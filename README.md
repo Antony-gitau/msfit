@@ -5,7 +5,7 @@ Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembl
 
 ## Method Overview
 
-![msfit system architecture](assets/system_architecture_best_method.png)
+![msfit system architecture](assets/system_architecture_best_method_isbi.png)
 
 Published `0.67658` submission path: `dinobloom_base + mlp` anchor (`mlp_s3`), `dinobloom_base + cosine` advisor (`cosine_s3`), and a frozen-backbone decoupled `dinobloom_base + mlp` advisor (`dec_c1`), combined with conservative confusion-pair overrides. The linear-head branch shown in the training block is part of the broader framework, not part of the final published hybrid.
 
