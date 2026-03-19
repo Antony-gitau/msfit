@@ -37,10 +37,10 @@ msfit/
 
 | Component | Role | Training setup | Eval macro-F1 | Leaderboard |
 |---|---|---|---:|---:|
-| `dinobloom_v4_mlp_s3 + TTA` | Anchor | `dinobloom_base + mlp`, full fine-tuning, S1->S2->S3 | 0.7210 | 0.67584 |
-| `dinobloom_v4_linear_s3 + TTA` | Linear reference | `dinobloom_base + linear`, full fine-tuning, S1->S2->S3 | 0.7210 | 0.66870 |
-| `dec_bestlb_cls_c1_wbcc + TTA` | Advisor 1 | `dinobloom_base + mlp`, frozen backbone, head-only fine-tuning | 0.7212 | 0.67540 |
-| `dinobloom_v4_cosine_s3 + TTA` | Advisor 2 | `dinobloom_base + cosine`, full fine-tuning, S1->S2->S3 | 0.7264 | 0.66085 |
+| `dinobloom_v4_mlp_s3 + TTA` | Anchor | `dinobloom_base + mlp`, full fine-tuning, S1->S2->S3 | 0.7184 | 0.67584 |
+| `dinobloom_v4_linear_s3 + TTA` | Linear reference | `dinobloom_base + linear`, full fine-tuning, S1->S2->S3 | 0.7281 | 0.66870 |
+| `dec_bestlb_cls_c1_wbcc + TTA` | Advisor 1 | `dinobloom_base + mlp`, frozen backbone, head-only fine-tuning | 0.7289 | 0.67540 |
+| `dinobloom_v4_cosine_s3 + TTA` | Advisor 2 | `dinobloom_base + cosine`, full fine-tuning, S1->S2->S3 | 0.7225 | 0.66085 |
 | `submission_mlp_anchor_r2_c1cos_pospair` | Final hybrid | Anchor plus conservative advisor agreement overrides | 0.7217 | **0.67658** |
 
 Test set submission CSVs for the models above are included in `msfit/submissions/`.
