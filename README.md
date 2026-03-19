@@ -1,13 +1,11 @@
-# MSFiT (Multi-Stage Fine-Tuning)
-
-Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification.
+# Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification
 
 
 ## Method Overview
 
 ![msfit system architecture](assets/system_architecture_best_method_isbi.png)
 
-Published `0.67658` submission path: `dinobloom_base + mlp` anchor (`mlp_s3`), `dinobloom_base + cosine` advisor (`cosine_s3`), and a frozen-backbone decoupled `dinobloom_base + mlp` advisor (`dec_c1`), combined with conservative confusion-pair overrides. The linear-head branch shown in the training block is part of the broader framework, not part of the final published hybrid.
+End-to-end fine-tuning and inference simplified visual illustration. During training, separate models are obtained by fine-tuning a pathology foundation model (DINOBloom) with different classifier heads (linear, cosine, and MLP) across staged optimization. During inference, saved checkpoints are combined using a selective head-diverse ensemble, where an MLP head acts as the primary predictor and is conditionally overridden by agreement between auxiliary heads.
 
 ## Layout
 
@@ -33,17 +31,9 @@ msfit/
 
 ## What It Reproduces
 
-- Best confirmed leaderboard submission: `0.67658` macro-F1
-- Method: MLP anchor + cosine advisor + decoupled `c1` advisor + conservative confusion-pair overrides
+- The training setup visualized by the flowchart above, including our best submission of `0.67658` macro-F1 on the WBCBench 2026 leaderboard.
 
-In plain terms:
-
-- `MLP anchor`: the default prediction used for the final submission. It is a `dinobloom_base` model with an `mlp` head, trained by full fine-tuning over 3 stages.
-- `Cosine advisor`: a second-opinion model used only for conservative overrides. It is a `dinobloom_base` model with a `cosine` head, also trained by full fine-tuning over 3 stages.
-- `Decoupled c1 advisor`: another second-opinion model used only for conservative overrides. It reuses the `dinobloom_base` backbone from the final MLP checkpoint, freezes that backbone, and trains a fresh `mlp` head only.
-- Final rule: keep the anchor prediction unless `c1` and cosine agree on an allowed confusion-pair change: `BNE->SNE`, `MO->VLY`, `MY->MMY`, or `LY->BL`.
-
-## Published Results
+## Results
 
 | Component | Role | Training setup | Eval macro-F1 | Leaderboard |
 |---|---|---|---:|---:|
@@ -53,9 +43,9 @@ In plain terms:
 | `dinobloom_v4_cosine_s3 + TTA` | Advisor 2 | `dinobloom_base + cosine`, full fine-tuning, S1->S2->S3 | 0.7264 | 0.66085 |
 | `submission_mlp_anchor_r2_c1cos_pospair` | Final hybrid | Anchor plus conservative advisor agreement overrides | 0.7217 | **0.67658** |
 
-Reference submission CSVs for these rows are included in `msfit/submissions/`.
+Test set submission CSVs for the models above are included in `msfit/submissions/`.
 
-And model checkpoints of the Anchor can be found on Hugging Face - https://huggingface.co/AntonyG/msfit-dinobloom-v4-mlp-s3
+And model checkpoints of the primary predictor (MLP-S3 TTA) can be found on Hugging Face - https://huggingface.co/AntonyG/msfit-dinobloom-v4-mlp-s3
 
 ## Head Specialization
 
