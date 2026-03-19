@@ -47,18 +47,6 @@ Test set submission CSVs for the models above are included in `msfit/submissions
 
 And model checkpoints of the primary predictor (MLP-S3 TTA) can be found on Hugging Face - https://huggingface.co/AntonyG/msfit-dinobloom-v4-mlp-s3
 
-## Head Specialization
-
-Examples from eval showing why head diversity was useful. For `MLP`, `linear`, and `cosine`, the table shows the best score within that head family on eval with TTA. `dec_c1` is shown separately because it is a frozen-backbone decoupled classifier rather than part of the main head-family sweep.
-
-| Class | Best MLP | Best linear | Best cosine | Winner |
-|---|---|---|---:|---|
-| `BNE` | 0.448 | 0.434 | 0.470 | Cosine |
-| `MMY` | 0.538 | 0.585 | 0.556 | Linear |
-| `VLY` | 0.626 | 0.648 | 0.633 | Linear |
-| `PMY` | 0.733 | 0.656 | 0.636  | MLP |
-| `PC` | 0.787 | 0.807 | 0.792 | Linear |
-
 ## Install
 
 ```bash
