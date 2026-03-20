@@ -1,19 +1,53 @@
 # Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification
 
+MSFiT is the public release for our ISBI 2026 WBCBench submission. It reproduces the published DINOBloom-based single-model checkpoints, the conservative head-diverse hybrid submission rule, and the reviewed label-analysis CSVs used in the paper.
 
 ## Method Overview
 
 ![msfit system architecture](assets/system_architecture_best_method_isbi.png)
 
-End-to-end fine-tuning and inference simplified visual illustration. During training, separate models are obtained by fine-tuning a pathology foundation model (DINOBloom) with different classifier heads (linear, cosine, and MLP) across staged optimization. During inference, saved checkpoints are combined using a selective head-diverse ensemble, where an MLP head acts as the primary predictor and is conditionally overridden by agreement between auxiliary heads.
+During training, separate DINOBloom-based models are obtained by end-to-end fine-tuning the backbone with different classifier heads (linear, cosine, and MLP) across staged optimization. During inference, saved checkpoints are combined using a selective head-diverse ensemble, where an MLP head acts as the primary predictor and is conditionally overridden by agreement between auxiliary heads.
 
-## Layout
+## Quick Start
+
+Install dependencies from the repository root:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the published hybrid reproduction:
+
+```bash
+RUN_NAME="repro_baseline_v1"
+bash reproduce_best_submission.sh \
+  --data-root /path/to/wbcbench-2026-data \
+  --python python3 \
+  --run-name "$RUN_NAME"
+```
+
+This writes outputs into `code_reproduction/$RUN_NAME/`, including:
+
+- `submission_best_reproduced.csv`
+- `repro_metadata.txt`
+- run logs
+- intermediate checkpoint folders
+
+## Repository Layout
 
 ```text
 msfit/
   README.md
   assets/
-    system_architecture_best_method.png
+    system_architecture_best_method_isbi.png
+  experiments/
+    train_mlp.sh
+    train_linear.sh
+    train_cosine.sh
+    train_decoupled_c1.sh
+  label_review/
+    train_top3_predictions.csv
+    val_top3_predictions.csv
   submissions/
     submission_dinobloom_v4_mlp_s3_tta.csv
     submission_dinobloom_v4_linear_s3_tta.csv
@@ -21,19 +55,15 @@ msfit/
     submission_dinobloom_v4_cosine_s3_tta.csv
     submission_mlp_anchor_r2_c1cos_pospair.csv
   reproduce_best_submission.sh
-  modeling.py
   train.py
   inference.py
-  requirements.txt
+  modeling.py
   scripts/
     build_conservative_hybrid_submission.py
+  requirements.txt
 ```
 
-## What It Reproduces
-
-- The training setup visualized by the flowchart above, including our best submission of `0.67658` macro-F1 on the WBCBench 2026 leaderboard.
-
-## Results
+## Published Results
 
 | Component | Role | Training setup | Eval macro-F1 | Leaderboard |
 |---|---|---|---:|---:|
@@ -43,15 +73,60 @@ msfit/
 | `dinobloom_v4_cosine_s3 + TTA` | Advisor 2 | `dinobloom_base + cosine`, full fine-tuning, S1->S2->S3 | 0.7225 | 0.66085 |
 | `submission_mlp_anchor_r2_c1cos_pospair` | Final hybrid | Anchor plus conservative advisor agreement overrides | 0.7217 | **0.67658** |
 
-Test set submission CSVs for the models above are included in `msfit/submissions/`.
+The submission CSVs for these models are included in `submissions/`.
 
-And model checkpoints of the primary predictor (MLP-S3 TTA) can be found on Hugging Face - https://huggingface.co/AntonyG/msfit-dinobloom-v4-mlp-s3
+The primary predictor checkpoint is available on Hugging Face:
 
-## Install
+- https://huggingface.co/AntonyG/msfit-dinobloom-v4-mlp-s3
+
+## Label Review Release
+
+The repository includes the reviewed top-3 prediction files used for the paper's expert label-review analysis:
+
+- `label_review/train_top3_predictions.csv`
+- `label_review/val_top3_predictions.csv`
+
+These files contain image id, assigned label, top-3 model predictions with probabilities, confidence margin, and expert review annotations.
+
+## Reproduce the Published Submission
+
+The default reproduction script rebuilds the published hybrid workflow and refuses to overwrite an existing run folder.
 
 ```bash
-pip install -r msfit/requirements.txt
+RUN_NAME="repro_baseline_v1"
+bash reproduce_best_submission.sh \
+  --data-root /path/to/wbcbench-2026-data \
+  --python python3 \
+  --run-name "$RUN_NAME"
 ```
+
+For a more repeatable rerun, pass `--deterministic 1`:
+
+```bash
+RUN_NAME="repro_baseline_det_v1"
+bash reproduce_best_submission.sh \
+  --data-root /path/to/wbcbench-2026-data \
+  --python python3 \
+  --run-name "$RUN_NAME" \
+  --deterministic 1
+```
+
+## Single-Model Commands
+
+If you want the main published branches without running the full hybrid reproduction, use the wrappers in [`experiments/`](./experiments):
+
+```bash
+bash experiments/train_mlp.sh --data-root /path/to/wbcbench-2026-data
+bash experiments/train_linear.sh --data-root /path/to/wbcbench-2026-data
+bash experiments/train_cosine.sh --data-root /path/to/wbcbench-2026-data
+bash experiments/train_decoupled_c1.sh \
+  --data-root /path/to/wbcbench-2026-data \
+  --checkpoint /path/to/dinobloom_v4_mlp_s3/best.pth
+```
+
+These wrappers create fresh run directories under `code_reproduction/` and keep the published schedules for each branch.
+
+## Environment Notes
 
 Requirements:
 
@@ -59,11 +134,13 @@ Requirements:
 - PyTorch 2.x with CUDA
 - `timm>=1.0`
 - WBCBench 2026 dataset from the challenge organizers
-- Internet access or cached Hugging Face weights for DINOBloom (and other models)
+- Internet access or cached Hugging Face weights for DINOBloom and any alternate backbones you use
+
+The framework supports more than the winning recipe. `train.py` and `inference.py` also expose alternate backbones, head types, loss functions, samplers, TTA, and frozen-vs-full fine-tuning configurations.
 
 ## Supported Backbones
 
-The framework supports **any timm-compatible model**, not just DINOBloom:
+The framework supports any timm-compatible model, not just DINOBloom:
 
 | Backbone | Type | Params | Pretrained On |
 |---|---|---|---|
@@ -76,82 +153,9 @@ The framework supports **any timm-compatible model**, not just DINOBloom:
 | `convnextv2_large.fcmae_ft_in22k_in1k_384` | ConvNeXt V2 | 198M | ImageNet-22K |
 | Any timm model name | varies | varies | varies |
 
-## Reproduce The Submission
-
-This command writes into a fresh run folder under `code_reproduction/` and refuses to overwrite an existing folder:
-
-```bash
-RUN_NAME="repro_baseline_nondet_v1"
-nohup bash msfit/reproduce_best_submission.sh \
-  --data-root /mnt/c/Users/amg/Downloads/wbcc-2026-main/wbc-bench-2026-data \
-  --python ./venv/bin/python \
-  --run-name "$RUN_NAME" \
-  > "code_reproduction/${RUN_NAME}.nohup.log" 2>&1 &
-echo "$RUN_NAME"
-```
-
-Monitor the run with:
-
-```bash
-tail -f "code_reproduction/${RUN_NAME}.nohup.log"
-```
-
-## Single-Model Commands
-
-If you want one-command training for the main published branches without running the full hybrid reproduction, use the scripts in [`experiments/`](./experiments):
-
-```bash
-bash msfit/experiments/train_mlp.sh --data-root /path/to/wbcbench-2026-data
-bash msfit/experiments/train_linear.sh --data-root /path/to/wbcbench-2026-data
-bash msfit/experiments/train_cosine.sh --data-root /path/to/wbcbench-2026-data
-bash msfit/experiments/train_decoupled_c1.sh \
-  --data-root /path/to/wbcbench-2026-data \
-  --checkpoint /path/to/dinobloom_v4_mlp_s3/best.pth
-```
-
-These wrappers create fresh run directories under `code_reproduction/` and keep the published stage schedules for each branch.
-
-## Method Summary
-
-1. **Backbone in the best setup:** `dinobloom_base`
-2. **Anchor model:** `dinobloom_base + mlp head`, full fine-tuning for `11 -> 5 -> 5` epochs
-3. **Advisor model 1:** `dinobloom_base + cosine head`, full fine-tuning for `11 -> 5 -> 5` epochs
-4. **Advisor model 2 (`c1`):** `dinobloom_base + mlp head`, backbone frozen, head-only fine-tuning for `8` epochs from the final MLP checkpoint
-5. **Losses:** focal loss for anchor/cosine, cross-entropy for `c1`
-6. **Training details:** label smoothing, rare-class-protected MixUp/CutMix, OneCycleLR, AMP, TTA=8 at inference
-7. **Final submission rule:** start from the anchor prediction and override only when both advisors agree on one of four allowed confusion-pair transitions
-
-Outputs:
-
-- `OUT_ROOT/RUN_NAME/submission_best_reproduced.csv`
-- `OUT_ROOT/RUN_NAME/repro_metadata.txt`
-- `OUT_ROOT/RUN_NAME/*.log`
-- `OUT_ROOT/RUN_NAME/*/best.pth`
-- `OUT_ROOT/RUN_NAME/preds_*_test/`
-
-
-
-## Notes
-
-- `train.py` still supports more than the winning recipe, but the README only documents the published path.
-- `inference.py` supports eval/test inference, TTA, logit export, and threshold/bias utilities.
-- If you want a slower, more repeatable rerun, pass `--deterministic 1` to the reproduction script.
-
-Like this:
-
-```bash
-RUN_NAME="repro_baseline_det_v1"
-nohup bash msfit/reproduce_best_submission.sh \
-  --data-root /mnt/c/Users/amg/Downloads/wbcc-2026-main/wbc-bench-2026-data \
-  --python ./venv/bin/python \
-  --run-name "$RUN_NAME" \
-  --deterministic 1 \
-  > "code_reproduction/${RUN_NAME}.nohup.log" 2>&1 &
-```
-
 ## Citation
 
-```
+```bibtex
 @inproceedings{Gitau2026ISBI,
   author    = {Antony Gitau and Martin Paulson and Bjørn-Jostein Singstad and Karl Thomas Hjelmervik and Ola Marius Lysaker and Veralia Gabriela Sanchez},
   title     = {Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification},
