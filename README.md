@@ -1,7 +1,5 @@
 # Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification
 
-MSFiT is the public release for our ISBI 2026 WBCBench submission. It reproduces the published DINOBloom-based single-model checkpoints, the conservative head-diverse hybrid submission rule, and the reviewed label-analysis CSVs used in the paper.
-
 ## Method Overview
 
 ![msfit system architecture](assets/system_architecture_best_method_isbi.png)
