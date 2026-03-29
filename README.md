@@ -152,6 +152,7 @@ The framework supports any timm-compatible model, not just DINOBloom:
 | Any timm model name | varies | varies | varies |
 
 ## Citation
+arXiv - https://arxiv.org/abs/2603.20383
 
 ```bibtex
 @inproceedings{Gitau2026ISBI,
