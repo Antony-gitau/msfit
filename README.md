@@ -1,4 +1,16 @@
-# Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification
+# Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification (ISBI 2026)
+
+Official code for our paper: arXiv - https://arxiv.org/abs/2603.20383
+
+```bibtex
+@inproceedings{Gitau2026ISBI,
+  author    = {Antony Gitau and Martin Paulson and Bjørn-Jostein Singstad and Karl Thomas Hjelmervik and Ola Marius Lysaker and Veralia Gabriela Sanchez},
+  title     = {Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification},
+  booktitle = {2026 IEEE 23rd International Symposium on Biomedical Imaging (ISBI)},
+  year      = {2026},
+  organization = {IEEE}
+}
+```
 
 ## Method Overview
 
@@ -151,15 +163,4 @@ The framework supports any timm-compatible model, not just DINOBloom:
 | `convnextv2_large.fcmae_ft_in22k_in1k_384` | ConvNeXt V2 | 198M | ImageNet-22K |
 | Any timm model name | varies | varies | varies |
 
-## Citation
-arXiv - https://arxiv.org/abs/2603.20383
 
-```bibtex
-@inproceedings{Gitau2026ISBI,
-  author    = {Antony Gitau and Martin Paulson and Bjørn-Jostein Singstad and Karl Thomas Hjelmervik and Ola Marius Lysaker and Veralia Gabriela Sanchez},
-  title     = {Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification},
-  booktitle = {2026 IEEE 23rd International Symposium on Biomedical Imaging (ISBI)},
-  year      = {2026},
-  organization = {IEEE}
-}
-```
