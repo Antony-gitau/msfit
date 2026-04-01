@@ -1,6 +1,10 @@
 # Multi-Stage Fine-Tuning of Pathology Foundation Models with Head-Diverse Ensembling for White Blood Cell Classification (ISBI 2026)
 
-Official code for our paper: arXiv - https://arxiv.org/abs/2603.20383
+Official code for our paper: 
+
+arXiv - https://arxiv.org/abs/2603.20383
+
+poster - https://github.com/Antony-gitau/msfit/blob/main/assets/Antony_Gitau_A0_poster.pdf
 
 ```bibtex
 @inproceedings{Gitau2026ISBI,
