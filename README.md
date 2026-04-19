@@ -6,6 +6,8 @@ arXiv - https://arxiv.org/abs/2603.20383
 
 poster - https://github.com/Antony-gitau/msfit/blob/main/assets/Antony_Gitau_A0_poster.pdf
 
+slides - https://github.com/Antony-gitau/msfit/blob/main/assets/ISBI%202026.pdf
+
 ```bibtex
 @inproceedings{Gitau2026ISBI,
   author    = {Antony Gitau and Martin Paulson and Bjørn-Jostein Singstad and Karl Thomas Hjelmervik and Ola Marius Lysaker and Veralia Gabriela Sanchez},
