@@ -2,6 +2,8 @@
 
 Official code for our paper: 
 
+IEEE - https://ieeexplore.ieee.org/document/11515495
+
 arXiv - https://arxiv.org/abs/2603.20383
 
 poster - https://github.com/Antony-gitau/msfit/blob/main/assets/Antony_Gitau_A0_poster.pdf
